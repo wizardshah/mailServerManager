@@ -1,0 +1,43 @@
+﻿@model mailServerManager.Models.MyMailServer
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>MyMailServer</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.DomainName)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DomainName)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.DomainMaxAccountSize)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DomainMaxAccountSize)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.DomainMaxSize)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DomainMaxSize)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Active)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Active)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

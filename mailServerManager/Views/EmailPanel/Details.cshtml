@@ -1,0 +1,53 @@
+﻿@model mailServerManager.Models.MyMail
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>MyMail</legend>
+
+    @Html.HiddenFor(model=> model.Password)
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.EmailAddress)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.EmailAddress)
+    </div>
+
+    @*<div class="display-label">
+         @Html.DisplayNameFor(model => model.Password)
+    </div>
+    <div class="display-field">
+        @Html.PasswordFor(model => model.Password )*@
+        
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Active)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Active)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.MaxSize)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.MaxSize)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.MyMailServer.DomainName)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.MyMailServer.DomainName)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

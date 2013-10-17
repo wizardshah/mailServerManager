@@ -26,9 +26,11 @@ namespace mailServerManager.Models
         [RegularExpression(@"^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?", ErrorMessage = "Domain Name Error")]
         public string DomainName { get; set; }
 
+        [Range(1, 65536)]
         [Display (Name = "Domain Max Account Size")]
         public int DomainMaxAccountSize { get; set; }
 
+        [Range(1, 65536000)]
         [Display (Name = "Domain Max Size")]
         public int DomainMaxSize { get; set; }
 
@@ -106,7 +108,28 @@ namespace mailServerManager.Models
 
         }
 
-        
+        public bool checkDomain()
+        {
+            Application myMailServer = new Application();
+
+            myMailServer.Authenticate(serverUser, serverPass);
+
+            myMailServer.Connect();
+            try
+            {
+
+            Domain checkDomain = myMailServer.Domains.get_ItemByName(this.DomainName.ToString());
+
+            
+                if (checkDomain != null)
+                    return true;
+                else
+                    return false;
+            }
+            catch { }
+
+            return false;
+        }
 
     }
 }

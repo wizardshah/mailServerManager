@@ -12,7 +12,7 @@
         <header>
             <div class="content-wrapper">
                 <div class="float-left">
-                    <p class="site-title">@Html.ActionLink("Mail Server Configuration", "Index", "Home")</p>
+                    <p class="site-title">@Html.ActionLink("Mail Server Configuration", "Index", "MailServerPanel")</p>
                 </div>
                 <div class="float-right">
                     @*<section id="login">
@@ -33,13 +33,13 @@
                 @RenderBody()
             </section>
         </div>
-        @*<footer>
+        <footer>
             <div class="content-wrapper">
                 <div class="float-left">
-                    <p>&copy; @DateTime.Now.Year - My ASP.NET MVC Application</p>
+                    <p>&copy; @DateTime.Now.Year - Email Server Configurations Application</p>
                 </div>
             </div>
-        </footer>*@
+        </footer>
 
         @Scripts.Render("~/bundles/jquery")
         @RenderSection("scripts", required: false)

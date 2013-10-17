@@ -60,7 +60,7 @@
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Edit", "MailServerPanel", new { id = Model.MyMailServer.Id}, null)
+    @Html.ActionLink("Back to List", "Edit", "MailServerPanel", new { id = ViewBag.MyMailServerId}, null)
 </div>
 
 @section Scripts {

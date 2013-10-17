@@ -8,13 +8,14 @@ using System.Web.Mvc;
 using mailServerManager.Models;
 using mailServerManager.Data;
 
+using System.Text.RegularExpressions;
+
+
 namespace mailServerManager.Controllers
 {
     public class EmailPanelController : Controller
     {
         private MyMailContext db = new MyMailContext();
-
-        
 
         //
         // GET: /EmailPanel/Create
@@ -34,22 +35,55 @@ namespace mailServerManager.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(MyMail mymail)
         {
-            if (ModelState.IsValid)
+            MyMailServer server = db.MyMailServers.Find(mymail.MyMailServerId);
+            if (mymail.checkEmail(server.DomainName, mymail.EmailAddress + "@" + server.DomainName))
             {
-                MyMailServer server = db.MyMailServers.Find(mymail.MyMailServerId);
-                mymail.EmailAddress = mymail.EmailAddress + "@" + server.DomainName;
-
-                db.MyMails.Add(mymail);
-                db.SaveChanges();
-
+                ModelState.AddModelError("EmailAddress", "Email Address already Exists");
+            }            
+            
+            
+            if (mymail.MaxSize > server.DomainMaxAccountSize)
+            {
+                ModelState.AddModelError("MaxSize", "Email max size increases the limit of " + server.DomainMaxAccountSize + "MB" );
                 
-                mymail.createNewEmailAccount(server.DomainName);
-
-                return RedirectToAction("Edit", "MailServerPanel", new { id = mymail.MyMailServerId });
             }
 
-            //ViewBag.MyMailServerId = new SelectList(db.MyMailServers, "Id", "DomainName", mymail.MyMailServerId);
-      
+            if (mymail.MaxSize <= 0)
+            {
+                ModelState.AddModelError("MaxSize", "Email Box Size can't be zero or negative");
+            }
+
+            string pattern = @"^([a-zA-Z0-9_.'-]+)$";
+
+            Match m = Regex.Match(mymail.EmailAddress, pattern);
+
+            if (!m.Success)
+            {
+                ModelState.AddModelError("EmailAddress", "Email Address contains invalid character");
+            }
+
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    mymail.EmailAddress = mymail.EmailAddress + "@" + server.DomainName;
+                    db.MyMails.Add(mymail);
+                    db.SaveChanges();
+
+                    mymail.createNewEmailAccount(server.DomainName);
+                }
+                catch
+                { }
+
+                return RedirectToAction("Edit", "MailServerPanel", new { id = mymail.MyMailServerId });
+
+            }
+            
+                        
+            ViewBag.MyMailServerId = mymail.MyMailServerId;
+            ViewBag.DomainName = server.DomainName;
+
             return View(mymail);
         }
 
@@ -63,7 +97,10 @@ namespace mailServerManager.Controllers
             {
                 return HttpNotFound();
             }
-            //ViewBag.MyMailServerId = new SelectList(db.MyMailServers, "Id", "DomainName", mymail.MyMailServerId);
+
+            ViewBag.MyMailServerId = mymail.MyMailServerId;
+            
+
             return View(mymail);
         }
 
@@ -74,16 +111,36 @@ namespace mailServerManager.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(MyMail mymail)
         {
+            MyMailServer server = db.MyMailServers.Find(mymail.MyMailServerId);
+
+            if (mymail.MaxSize > server.DomainMaxAccountSize)
+            {
+                ModelState.AddModelError("MaxSize", "Email max size increases the limit of " + server.DomainMaxAccountSize + "MB");
+
+            }
+
+            if (mymail.MaxSize <= 0)
+            {
+                ModelState.AddModelError("MaxSize", "Email Box Size can't be zero or negative");
+            }
+
+            //string pattern = @"^([a-zA-Z0-9_.'-]+)$";
+
+            string pattern = @"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
+
+            Match m = Regex.Match(mymail.EmailAddress, pattern);
+
+            if (!m.Success)
+            {
+                ModelState.AddModelError("EmailAddress", "Email Address contains invalid character");
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    MyMailServer server = db.MyMailServers.Find(mymail.MyMailServerId);
-
                     db.Entry(mymail).State = EntityState.Modified;
                     db.SaveChanges();
-
-                    
 
                     mymail.editEmailAccount(server.DomainName);
                 }
@@ -91,7 +148,10 @@ namespace mailServerManager.Controllers
 
                 return RedirectToAction("Edit", "MailServerPanel", new { id = mymail.MyMailServerId });
             }
-            //ViewBag.MyMailServerId = new SelectList(db.MyMailServers, "Id", "DomainName", mymail.MyMailServerId);
+
+            ViewBag.MyMailServerId = mymail.MyMailServerId;
+            ViewBag.DomainName = server.DomainName;
+
             return View(mymail);
         }
 
@@ -116,11 +176,17 @@ namespace mailServerManager.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             MyMail mymail = db.MyMails.Find(id);
-            db.MyMails.Remove(mymail);
-            db.SaveChanges();
 
-            MyMailServer server = db.MyMailServers.Find(mymail.MyMailServerId);
-            mymail.deleteEmailAccount(server.DomainName);
+            try
+            {                
+                db.MyMails.Remove(mymail);
+                db.SaveChanges();
+
+                MyMailServer server = db.MyMailServers.Find(mymail.MyMailServerId);
+                mymail.deleteEmailAccount(server.DomainName);
+            }
+            catch
+            { }
 
             return RedirectToAction("Edit", "MailServerPanel", new { id = mymail.MyMailServerId });
         }

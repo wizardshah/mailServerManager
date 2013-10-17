@@ -50,6 +50,16 @@ namespace mailServerManager.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(MyMailServer mymailserver)
         {
+            if (mymailserver.checkDomain())
+            {
+                ModelState.AddModelError("DomainName", "Domain Name Already Exist");
+            }
+
+            if (mymailserver.DomainMaxAccountSize >= mymailserver.DomainMaxSize)
+            {
+                ModelState.AddModelError("DomainMaxAccountSize", "Domain Max Account Size Can't be bigger or equal to Domain Max Size");
+            }
+
             if (ModelState.IsValid)
             {
                 db.MyMailServers.Add(mymailserver);
@@ -59,6 +69,8 @@ namespace mailServerManager.Controllers
 
                 return RedirectToAction("Index");
             }
+
+            ViewBag.MyMailServerId = mymailserver.Id;
 
             return View(mymailserver);
         }
@@ -73,6 +85,9 @@ namespace mailServerManager.Controllers
             {
                 return HttpNotFound();
             }
+
+            ViewBag.MyMailServerId = mymailserver.Id;
+
             return View(mymailserver);
         }
 
@@ -83,15 +98,46 @@ namespace mailServerManager.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(MyMailServer mymailserver)
         {
+            if (mymailserver.DomainMaxAccountSize >= mymailserver.DomainMaxSize)
+            {
+                ModelState.AddModelError("DomainMaxAccountSize", "Domain Max Account Size can't be bigger or equal to Domain Max Size");
+            }
+
+            MyMailServer current = db.MyMailServers.Find(mymailserver.Id);
+
+            if (mymailserver.DomainMaxSize < current.DomainMaxSize)
+            {
+                if (current.Active)
+                    ModelState.AddModelError("DomainMaxSize", "Domain Max Size can't be Reduced");
+            }
+
+            if (mymailserver.DomainMaxAccountSize < current.DomainMaxAccountSize)
+            {
+                if (current.Active)
+                    ModelState.AddModelError("DomainMaxAccountSize", "Domain Max Account Size can't be reduced");
+            }
+
             if (ModelState.IsValid)
             {
-                db.Entry(mymailserver).State = EntityState.Modified;
-                db.SaveChanges();
+                try
+                {
+                    var det = db.MyMailServers.Find(mymailserver.Id);
+                    db.Detach(det);
 
-                mymailserver.editDomain();
+                    db.Entry(mymailserver).State = EntityState.Modified;
+                    db.SaveChanges();
+                    
+                    mymailserver.editDomain();
+                }
+                catch
+                { }
+
 
                 return RedirectToAction("Index");
             }
+
+            ViewBag.MyMailServerId = mymailserver.Id;
+
             return View(mymailserver);
         }
 

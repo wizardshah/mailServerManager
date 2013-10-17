@@ -7,6 +7,7 @@ using mailServerManager.Models;
 
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Data.Entity.Infrastructure;
 
 namespace mailServerManager.Data
 {
@@ -25,6 +26,12 @@ namespace mailServerManager.Data
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             //modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+        }
+
+        public void Detach(object entity)
+        {
+            var objectContext = ((IObjectContextAdapter)this).ObjectContext;
+            objectContext.Detach(entity);
         }
     }
 }

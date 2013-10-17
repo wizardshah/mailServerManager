@@ -19,9 +19,8 @@ namespace mailServerManager.Models
 
         public int Id { get; set; }
 
-        [Required]
-        [Display (Name = "Email Address")]
-        //[RegularExpression(@"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$", ErrorMessage = "Not a Valid Email")] 
+        [Required]        
+        [Display (Name = "Email Address")]        
         public string EmailAddress { get; set; }
 
         [Required]
@@ -29,7 +28,7 @@ namespace mailServerManager.Models
         [Display (Name = "Email Password")]
         public string Password { get; set; }
 
-        [DefaultValue(false)]
+        [DefaultValue(true)]
         public bool Active { get; set; }
 
         [Display(Name = "Email Box Max Size")]
@@ -148,6 +147,39 @@ namespace mailServerManager.Models
             return 0;
 
         }
+
+        public bool checkEmail(string domain, string email)
+        {
+            Application myMailServer = new Application();
+
+            myMailServer.Authenticate(serverUser, serverPass);
+
+            myMailServer.Connect();
+
+            try
+            {
+                Domain mydomain = myMailServer.Domains.get_ItemByName(domain);
+
+                if (mydomain.Active)
+                {
+                    Account myAccount = mydomain.Accounts.get_ItemByAddress(email);
+
+                    if (myAccount != null)
+                    {
+                        return true;
+                    }
+                    else
+                        return false;
+                }                
+            }
+            catch
+            {
+                return false;
+            }
+
+            return false;
+        }
+
 
     }
 }

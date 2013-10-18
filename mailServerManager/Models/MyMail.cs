@@ -45,29 +45,31 @@ namespace mailServerManager.Models
 
         public int createNewEmailAccount(string domain)
         {
+            //interface to hMailserver
             Application myMailServer = new Application();
 
+            //authentication for mail server
             myMailServer.Authenticate(serverUser, serverPass);
 
+            //connect to mail server
             myMailServer.Connect();
 
+            //current domain
             Domain mydomain = myMailServer.Domains.get_ItemByName(domain);
             
             try
             {
-
-                if (mydomain.Active)
+                if (mydomain != null)
                 {
-
+                    //create new Account object with Add() attribute
                     Account newAccount = mydomain.Accounts.Add();
-
+                    //set up the attributes
                     newAccount.Address = this.EmailAddress;
                     newAccount.Password = this.Password;
                     newAccount.Active = this.Active;
                     newAccount.MaxSize = this.MaxSize;
-
+                    //save account and domain
                     newAccount.Save();
-
                     mydomain.Save();
                 }
             }
@@ -90,14 +92,17 @@ namespace mailServerManager.Models
             {
                 Domain mydomain = myMailServer.Domains.get_ItemByName(domain);
 
-                if (mydomain.Active)
+                if (mydomain != null)
                 {
+                    //find the account object by Email Address
                     Account delAccount = mydomain.Accounts.get_ItemByAddress(this.EmailAddress.ToString());
 
-                    if (delAccount.Active)
+                    if (delAccount != null)
                     {
                         delAccount.Delete();
                     }
+                    else
+                        return 1;
                 }
 
                 mydomain.Save();
@@ -120,11 +125,11 @@ namespace mailServerManager.Models
             {
                 Domain mydomain = myMailServer.Domains.get_ItemByName(domain);
 
-                if (mydomain.Active)
+                if (mydomain != null)
                 {
                     Account myAccount = mydomain.Accounts.get_ItemByAddress(this.EmailAddress.ToString());
 
-                    if (myAccount.Active)
+                    if (myAccount != null)
                     {
                         if (this.MaxSize < mydomain.MaxAccountSize)
                             myAccount.MaxSize = this.MaxSize;
@@ -150,6 +155,7 @@ namespace mailServerManager.Models
 
         }
 
+        //this function  check that the email already exists or not
         public bool checkEmail(string domain, string email)
         {
             Application myMailServer = new Application();
@@ -162,7 +168,7 @@ namespace mailServerManager.Models
             {
                 Domain mydomain = myMailServer.Domains.get_ItemByName(domain);
 
-                if (mydomain.Active)
+                if (mydomain != null)
                 {
                     Account myAccount = mydomain.Accounts.get_ItemByAddress(email);
 

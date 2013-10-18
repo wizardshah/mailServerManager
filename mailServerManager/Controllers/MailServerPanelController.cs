@@ -107,13 +107,13 @@ namespace mailServerManager.Controllers
 
             if (mymailserver.DomainMaxSize < current.DomainMaxSize)
             {
-                if (current.Active)
+                if (current != null)
                     ModelState.AddModelError("DomainMaxSize", "Domain Max Size can't be Reduced");
             }
 
             if (mymailserver.DomainMaxAccountSize < current.DomainMaxAccountSize)
             {
-                if (current.Active)
+                if (current != null)
                     ModelState.AddModelError("DomainMaxAccountSize", "Domain Max Account Size can't be reduced");
             }
 
@@ -121,8 +121,10 @@ namespace mailServerManager.Controllers
             {
                 try
                 {
+                    //code to detach, incase the item is attached
                     var det = db.MyMailServers.Find(mymailserver.Id);
                     db.Detach(det);
+                    //end code to detach
 
                     db.Entry(mymailserver).State = EntityState.Modified;
                     db.SaveChanges();

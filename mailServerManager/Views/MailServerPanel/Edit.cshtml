@@ -13,18 +13,27 @@
     <fieldset>
         <legend>MyMailServer</legend>
 
+        <p></p>
+
         @Html.HiddenFor(model => model.Id)
         @Html.HiddenFor(model => model.DomainName)
+
+       
 
         <div class="display-label">
             @Html.DisplayNameFor(model => model.DomainName)
         </div>
 
+        <p></p>
+
         <div class="display-field">
             @Html.DisplayFor(model => model.DomainName)
         </div>
 
-        
+        <p></p>
+
+
+
         <div class="editor-label">
             @Html.LabelFor(model => model.DomainMaxAccountSize)
         </div>

@@ -17,13 +17,19 @@
         @Html.HiddenFor(model =>model.MyMailServerId)
         @Html.HiddenFor(model =>model.EmailAddress)
 
+        <p></p>
+
         <div class="display-label">
             @Html.DisplayNameFor(model => model.EmailAddress)
         </div>
 
+        <p></p>
+
         <div class="display-field">
             @Html.DisplayFor(model => model.EmailAddress)
         </div>
+
+        <p></p>
 
         <div class="editor-label">
             @Html.LabelFor(model => model.Password)

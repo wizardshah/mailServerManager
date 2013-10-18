@@ -35,7 +35,7 @@ namespace mailServerManager.Models
         public int DomainMaxSize { get; set; }
 
         [Display (Name = "Domain Active Status")]
-        [DefaultValue(false)]
+        [DefaultValue(true)]
         public bool Active { get; set; }
 
 
@@ -101,13 +101,14 @@ namespace mailServerManager.Models
 
             try
             {
-                if(delDomain.Active)
+                if(delDomain != null)
                     delDomain.Delete();
             }
             catch { }
 
         }
 
+        //check whether Domain already exists or not
         public bool checkDomain()
         {
             Application myMailServer = new Application();

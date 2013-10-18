@@ -141,7 +141,9 @@ namespace mailServerManager.Models
                 mydomain.Save();
             }
             catch
-            { }
+            {
+ 
+            }
 
 
             return 0;

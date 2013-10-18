@@ -4,7 +4,7 @@
     ViewBag.Title = "Edit";
 }
 
-<h2>Edit</h2>
+<h2>Edit Email</h2>
 
 @using (Html.BeginForm()) {
     @Html.AntiForgeryToken()
@@ -15,13 +15,14 @@
 
         @Html.HiddenFor(model => model.Id)
         @Html.HiddenFor(model =>model.MyMailServerId)
+        @Html.HiddenFor(model =>model.EmailAddress)
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.EmailAddress)
+        <div class="display-label">
+            @Html.DisplayNameFor(model => model.EmailAddress)
         </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.EmailAddress)
-            @Html.ValidationMessageFor(model => model.EmailAddress)
+
+        <div class="display-field">
+            @Html.DisplayFor(model => model.EmailAddress)
         </div>
 
         <div class="editor-label">

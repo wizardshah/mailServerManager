@@ -4,7 +4,7 @@
     ViewBag.Title = Model.DomainName;
 }
 
-<h2>Edit</h2>
+<h2>Edit Domain</h2>
 
 @using (Html.BeginForm()) {
     @Html.AntiForgeryToken()
@@ -24,14 +24,7 @@
             @Html.DisplayFor(model => model.DomainName)
         </div>
 
-        @*<div class="editor-label">
-            @Html.LabelFor(model => model.DomainName)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.DomainName)
-            @Html.ValidationMessageFor(model => model.DomainName)
-        </div>*@
-
+        
         <div class="editor-label">
             @Html.LabelFor(model => model.DomainMaxAccountSize)
         </div>
@@ -64,11 +57,13 @@
 
         <p></p>
         
-        <h3>Emails</h3>
+        <h2>Emails</h2>
         <p>
-            @Html.ActionLink("Create New", "Create", "EmailPanel", new {MyMailServerId = Model.Id}, null )
+            @Html.ActionLink("Create New Email", "Create", "EmailPanel", new {MyMailServerId = Model.Id}, null )
         </p>
-        
+
+        <h3>Current Emails</h3>
+
         <table class="table table-striped">
 
             @try

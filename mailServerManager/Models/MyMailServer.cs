@@ -8,7 +8,7 @@ using System.Data.Entity.ModelConfiguration.Conventions;
 
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-
+using System.Configuration;
 
 using hMailServer;//hmailserver com api
 
@@ -41,9 +41,11 @@ namespace mailServerManager.Models
 
         public virtual ICollection<MyMail> MyMails { get; set; }
 
-
-        private string serverUser = "Administrator";//hmailserver username
-        private string serverPass = "365connect";//hmailserver password
+        /*hmailserver username taken from Web.config*/
+        private string serverUser = ConfigurationManager.AppSettings["hMailServerUserName"].ToString();
+        /*hmailserver password taken from Web.config*/    
+        private string serverPass = ConfigurationManager.AppSettings["hMailServerPassword"].ToString();
+            
 
         public void createNewDomain()
         {
@@ -53,14 +55,18 @@ namespace mailServerManager.Models
 
             myMailServer.Connect();
 
-            Domain newDomain = myMailServer.Domains.Add();
+            try
+            {
+                Domain newDomain = myMailServer.Domains.Add();
 
-            newDomain.Name = this.DomainName;
-            newDomain.MaxAccountSize = this.DomainMaxAccountSize;
-            newDomain.MaxSize = this.DomainMaxSize;
-            newDomain.Active = this.Active;
+                newDomain.Name = this.DomainName;
+                newDomain.MaxAccountSize = this.DomainMaxAccountSize;
+                newDomain.MaxSize = this.DomainMaxSize;
+                newDomain.Active = this.Active;
 
-            newDomain.Save();
+                newDomain.Save();
+            }
+            catch { }
 
         }
 
@@ -72,18 +78,19 @@ namespace mailServerManager.Models
 
             myMailServer.Connect();
 
-            Domain myDomain = myMailServer.Domains.get_ItemByName(this.DomainName.ToString());
-
             try
             {
+                Domain myDomain = myMailServer.Domains.get_ItemByName(this.DomainName.ToString());
+
                 myDomain.Active = this.Active;
                 myDomain.Name = this.DomainName;
                 myDomain.MaxSize = this.DomainMaxSize;
                 myDomain.MaxAccountSize = this.DomainMaxAccountSize;
+                
             }
             catch { }
 
-            myDomain.Save();
+            
 
             return 0;
 
@@ -97,11 +104,11 @@ namespace mailServerManager.Models
 
             myMailServer.Connect();
 
-            Domain delDomain = myMailServer.Domains.get_ItemByName(this.DomainName.ToString());
-
             try
             {
-                if(delDomain != null)
+                Domain delDomain = myMailServer.Domains.get_ItemByName(this.DomainName.ToString());
+
+                if (delDomain != null)
                     delDomain.Delete();
             }
             catch { }

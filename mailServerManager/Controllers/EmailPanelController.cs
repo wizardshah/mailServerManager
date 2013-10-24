@@ -53,7 +53,7 @@ namespace mailServerManager.Controllers
                 ModelState.AddModelError("MaxSize", "Email Box Size can't be zero or negative");
             }
 
-            string pattern = @"^([a-zA-Z0-9_.-]+)$";//valid email reg expression
+            string pattern = @"^([a-zA-Z0-9_.-+$]+)$";//valid email reg expression
 
             Match m = Regex.Match(mymail.EmailAddress, pattern);//check for invalid characters
 

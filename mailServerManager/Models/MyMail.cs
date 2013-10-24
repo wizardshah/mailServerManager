@@ -8,6 +8,7 @@ using System.Data.Entity.ModelConfiguration.Conventions;
 
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 
 
 using hMailServer;//hmailserver com api
@@ -38,10 +39,11 @@ namespace mailServerManager.Models
 
         public virtual MyMailServer MyMailServer { get; set; }
 
-
-        private string serverUser = "Administrator";//hmailserver username
-        private string serverPass = "365connect";//hmailserver password
-
+        /*hmailserver username taken from Web.config*/
+        private string serverUser = ConfigurationManager.AppSettings["hMailServerUserName"].ToString();
+        /*hmailserver password taken from Web.config*/    
+        private string serverPass = ConfigurationManager.AppSettings["hMailServerPassword"].ToString();
+        
 
         public int createNewEmailAccount(string domain)
         {
@@ -53,21 +55,23 @@ namespace mailServerManager.Models
 
             //connect to mail server
             myMailServer.Connect();
-
-            //current domain
-            Domain mydomain = myMailServer.Domains.get_ItemByName(domain);
             
             try
             {
+                //current domain
+                Domain mydomain = myMailServer.Domains.get_ItemByName(domain);
+
                 if (mydomain != null)
                 {
                     //create new Account object with Add() attribute
                     Account newAccount = mydomain.Accounts.Add();
+                    
                     //set up the attributes
                     newAccount.Address = this.EmailAddress;
                     newAccount.Password = this.Password;
                     newAccount.Active = this.Active;
                     newAccount.MaxSize = this.MaxSize;
+                    
                     //save account and domain
                     newAccount.Save();
                     mydomain.Save();
@@ -135,6 +139,7 @@ namespace mailServerManager.Models
                             myAccount.MaxSize = this.MaxSize;
                         else
                             return 0;
+
                         myAccount.Address = this.EmailAddress;
                         myAccount.Password = this.Password;
                         myAccount.Active = this.Active;
